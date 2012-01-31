@@ -930,6 +930,57 @@
           this.controls = document.querySelector(this.getAttribute("controls"));
           /*this.dataform = document.querySelector(this.getAttribute("dataform"));*/
           this.timeNodes = [];
+		  
+		  var style = this.main.style;
+		  this.draw = function (aWaveformBegin, aWaveformEnd) {
+			var left  = Math.max(parent.time_in,  aWaveformBegin);
+			var right = Math.min(parent.time_out, aWaveformEnd);
+
+			if (left >= right) {
+			  style.display = "none";
+			} else {
+			  var duration = aWaveformEnd - aWaveformBegin;
+			  var ratio = (right - left) / duration;
+			  var offset = (left - aWaveformBegin) / duration;
+			  //style.left  = (offset * gTimeCursor.width) + "px";
+			  //style.width = (ratio  * gTimeCursor.width) + "px";
+			  //consoleLog("draw (xbl): " + aWaveformBegin + " → " + aWaveformEnd);
+			  style.left  = (offset * 100) + "%";
+			  style.width = (ratio  * 100) + "%";
+			  style.display = "block";
+			}
+		  };
+		  this.update = function () {
+			self.draw(gTimeController.begin, gTimeController.end);
+		  };
+		  this.update();
+
+		  this.focus = function () {
+			self.main.className = "active";
+		  };
+		  this.blur = function () {
+			self.main.removeAttribute("class");
+		  };
+
+		  // Event listeners: begin/end drag
+		  function onClick(event) {
+		  }
+		  function onResize(event) {
+			return; // XXX
+			if (event.button) return;
+			var begin = mediaPlayer.currentTime;
+			var end = getTimePosition(event);
+			//self.setDur(end - begin);
+			if (end > begin)
+			  self.setEnd(end);
+			else
+			  self.setBegin(end);
+		  }
+		  this.begin.addEventListener("mousedown", function(event) {
+			onClick(event);
+			self.begin.addEventListener("mousemove", onResize, false);
+		  }, false);
+		  
         ]]>
       </constructor>
       <method name="draw">
@@ -1038,16 +1089,20 @@
 
               // note: the 'main' element could be an <html:div> block
               // but the contextual menu wouldn't work (see 'context' attribute)
-              this.main  = document.createElementNS(xulNS, "hbox"); // main block
-              this.begin = document.createElementNS(htmlNS, "div"); // left handle
-              this.end   = document.createElementNS(htmlNS, "div"); // right handle
+              //this.main  = document.createElementNS(xulNS, "hbox"); // main block
+              //this.begin = document.createElementNS(htmlNS, "div"); // left handle
+              //this.end   = document.createElementNS(htmlNS, "div"); // right handle
 
-              this.begin.className = "handle-left";
-              this.end.className   = "handle-right";
-              this.main.appendChild(this.begin);
-              this.main.appendChild(this.end);
-              if (!SCENARI)
-                this.main.setAttribute("context", "transition");
+              //this.begin.className = "handle-left";
+              //this.end.className   = "handle-right";
+              //this.main.appendChild(this.begin);
+              //this.main.appendChild(this.end);
+			  
+			  this.main = document.createElement("timeNode");
+			  this.main.setAttribute("class","timeNode");
+			  
+              //if (!SCENARI)
+              //  this.main.setAttribute("context", "transition");
 
               var style = this.main.style;
               this.draw = function (aWaveformBegin, aWaveformEnd) {
@@ -1073,36 +1128,36 @@
               };
               this.update();
 
-              this.focus = function () {
-                self.main.className = "active";
-              };
-              this.blur = function () {
-                self.main.removeAttribute("class");
-              };
+              //this.focus = function () {
+              //  self.main.className = "active";
+              //};
+              //this.blur = function () {
+              //  self.main.removeAttribute("class");
+              //};
 
               // Event listeners: begin/end drag
-              function onClick(event) {
-              }
-              function onResize(event) {
-                return; // XXX
-                if (event.button) return;
-                var begin = mediaPlayer.currentTime;
-                var end = getTimePosition(event);
-                //self.setDur(end - begin);
-                if (end > begin)
-                  self.setEnd(end);
-                else
-                  self.setBegin(end);
-              }
-              this.begin.addEventListener("mousedown", function(event) {
-                onClick(event);
-                self.begin.addEventListener("mousemove", onResize, false);
-              }, false);
+              //function onClick(event) {
+              //}
+              //function onResize(event) {
+              //  return; // XXX
+              //  if (event.button) return;
+              //  var begin = mediaPlayer.currentTime;
+              //  var end = getTimePosition(event);
+              //  //self.setDur(end - begin);
+              //  if (end > begin)
+              //    self.setEnd(end);
+              //  else
+              //    self.setBegin(end);
+              //}
+              //this.begin.addEventListener("mousedown", function(event) {
+              //  onClick(event);
+              //  self.begin.addEventListener("mousemove", onResize, false);
+              //}, false);
             }
 
             // main 'timeSegment' object constructor
             function timeSegment(begin, end) {
-              //consoleLog("new (xbl): " + begin + " → " + end);
+              consoleLog("new (xbl): " + begin + " → " + end);
 
               const self = this;
               this.begin = begin;

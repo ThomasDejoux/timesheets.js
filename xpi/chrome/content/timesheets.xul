@@ -84,7 +84,7 @@
     <splitter
         id        = "sidebar-left-splitter"
         class     = "chromeclass-extrachrome"
-        state     = "collapsed"
+        state     = ""
         collapse  = "before">
       <vbox flex="1">
         <grippy />
@@ -137,7 +137,7 @@
         <timeController id="timeController" flex="1" hidetoolbar="false"
                         media="#audioPlayer">
           <spacer flex="1" />
-          <toolbarbutton id="newSegment" label="new" oncommand="newSegmentXBL()"/>
+          <toolbarbutton id="newSegment" label="new" oncommand="newSegment()"/>
         </timeController>
 
         <!--
@@ -154,10 +154,12 @@
 
         <!-- time container -->
         <html:h2> timeContainer </html:h2>
-        <timeContainer id="timeContainer" hidetoolbar="false" flex="1"
-                       controls="#timeController" />
+        <excl id="timeContainer" flex="1" />
+              <!--controls="#timeController" />-->
 
-        <hbox id="timeContainerProps" pack="begin" align="center">
+        <!--
+        <hbox id="timeContainerProps" pack="begin" align="center"
+              hidden="true" style="display: none;">
           <button label="sort"  oncommand="sortSegments; computeTimeNodes()"/>
           <spacer flex="1"/>
           <label value="timeContainer:"/>
@@ -182,7 +184,8 @@
             </menupopup>
           </menulist>
         </hbox>
-        <html:div id="timeSegments" />
+        -->
+        <html:div id="timeSegments" style="display: none;" />
       </vbox>
 
       <splitter
@@ -195,8 +198,8 @@
       <!-- content / data -->
 
       <vbox id="content" flex="1">
-        <html:h2> data forms </html:h2>
-        <dataform flex="1" begin="1:49" end="3:41" data="test" />
+        <!--<html:h2> data forms </html:h2>-->
+        <dataform id="xblFormTemplate" flex="1" begin="1:49" end="3:41" data="(empty!)" hidden="true" />
 
         <groupbox id="segmentTemplate" hidden="true">
           <hbox align="center">
@@ -223,14 +226,16 @@
     </splitter>
 
     <vbox id="sidebar-right" class="chromeclass-extrachrome" hidden="false">
-      <html:h2>
-        Media
-      </html:h2>
+      <html:h2> Media </html:h2>
       <label value="base URI:"/>
       <hbox>
         <textbox id="mediaBaseURI" flex="1" crop="end"
                  style="text-align: left;"
+                 value="http://localhost/timesheets/media/composer/" />
+                 <!-- other possible default values:
+                 value="file:///home/kaze/www/timesheets/media/composer/" />
                  value="http://wam.inrialpes.fr/timesheets/media/composer/" />
+                 -->
       </hbox>
       <label value="media file:"/>
       <hbox>
@@ -252,45 +257,7 @@
       <progressmeter id="downloadProgress" mode="determined" value="0"
       style="visibility: hidden;" />
 
-      <!--
-      <html:h2>
-        Parameters
-      </html:h2>
-      <label value="media file:"/>
-      <hbox>
-        <textbox id="mediaFilePath" flex="1" readonly="true" crop="end" />
-        <toolbarbutton label="…" oncommand="getMediaFile()"/>
-      </hbox>
-      <label value="waveform file:"/>
-      <hbox>
-        <textbox id="waveformFilePath" flex="1" readonly="true" crop="end" />
-        <toolbarbutton label="…" oncommand="getWaveformFile()"/>
-      </hbox>
-      <label value="chunk duration:"/>
-      <hbox align="center">
-        <textbox id="chunkDuration" type="number" min="0" value="0" increment="50"
-            tooltiptext="leave 0 to parse the whole PCM/8 file"/>
-        <label value="ms"/>
-      </hbox>
-      <label value="zoom delay:"/>
-      <hbox align="center">
-        <textbox id="zoomDelay" type="number" min="0" value="0" increment="50"
-            tooltiptext="emulates the server’s response time"/>
-        <label value="ms"/>
-      </hbox>
-
-      <html:h2>
-        Tests
-      </html:h2>
-      <label value="elapsed time:"/>
-      <textbox id="elapsedTime" readonly="true" />
-      <label value="canvas width:"/>
-      <textbox id="canvasWidth" readonly="true" />
-      <label value="console:"/>
-      -->
-      <html:h2>
-        Console
-      </html:h2>
+      <html:h2> Console </html:h2>
       <textbox id="console" multiline="true" flex="1" readonly="true" />
     </vbox>
 

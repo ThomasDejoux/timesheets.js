@@ -212,3 +212,7 @@ thumb[orient="horizontal"] {
   cursor: e-resize;
 }
 
+.timeNode{
+  -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#timeNode");
+}
+
