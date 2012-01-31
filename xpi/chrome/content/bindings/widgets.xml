@@ -61,6 +61,7 @@
      -    zoomIn               zoom current waveform image
      -    zoomOut              unzoom current waveform image
      -->
+       
   <binding id="timeController">
     <resources>
       <stylesheet src="widgets.css" />
@@ -167,6 +168,7 @@
         <setter>
           <![CDATA[
             const mediaTime = document.getAnonymousElementByAttribute(this, "anonid", "mediaTime");
+            
             mediaTime.time = val;
             this.media.currentTime = val;
             this.waveform.currentTime = val;
@@ -587,6 +589,7 @@
   <binding id="thumbnail">
     <resources>
       <stylesheet src="chrome://timesheets/skin/timeline.css" />
+      <stylesheet src="widgets.css" />
     </resources>
 
     <content>
@@ -594,7 +597,7 @@
         <xul:groupbox>
           <xul:hbox pack="end" align="center">
             <xul:label value="begin"/>
-            <xul:textbox type="time" decimals="2" anonid="begin" xbl:inherits="value=begin" />
+            <xul:textbox type="time" decimals="2" anonid="begin" />
             <xul:label value="end"/>
             <xul:textbox type="time" decimals="2" anonid="end" xbl:inherits="value=end" />
           </xul:hbox>
@@ -623,7 +626,10 @@
         <setter>
           <![CDATA[
             const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
+          consoleLog(begin.nodeName);
             begin.time = val;
+            begin.value = val;
+          consoleLog('begin.time = ' + begin.time);
           ]]>
         </setter>
       </property>

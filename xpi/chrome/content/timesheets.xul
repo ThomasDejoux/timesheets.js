@@ -199,9 +199,9 @@
 
       <vbox id="content" flex="1">
         <!--<html:h2> data forms </html:h2>-->
-        <dataform id="xblFormTemplate" flex="1" begin="1:49" end="3:41" data="(empty!)" hidden="true" />
+       <!-- <dataform id="xblFormTemplate" flex="1" begin="1:49" end="3:41" data="(empty!)" hidden="true" />
 
-        <groupbox id="segmentTemplate" hidden="true">
+         <groupbox id="segmentTemplate" hidden="true">
           <hbox align="center">
             <spacer flex="1"/>
             <label value="begin"/>
@@ -211,7 +211,7 @@
             <checkbox label="auto" checked="false" hidden="true"/>
           </hbox>
           <textbox multiline="true" value="(empty)"/>
-        </groupbox>
+        </groupbox>-->
       </vbox>
 
     </vbox> <!-- appcontent -->

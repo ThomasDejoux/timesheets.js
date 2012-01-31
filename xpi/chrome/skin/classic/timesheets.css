@@ -155,6 +155,7 @@ dataform {
   -moz-binding: url("chrome://timesheets/content/bindings/widgets.xml#thumbnail");
 }
 
+
 slider {
   /*-moz-binding: url("");*/
   -moz-appearance: scrollbartrack-horizontal;
