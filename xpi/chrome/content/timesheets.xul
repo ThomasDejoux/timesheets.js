@@ -35,7 +35,6 @@
    -
    - ***** END LICENSE BLOCK ***** -->
 
-
 <?xml-stylesheet type="text/css" href="chrome://global/skin/" ?>
 <?xml-stylesheet type="text/css" href="chrome://timesheets/skin/" ?>
 <window title = "Timesheet Composer"
@@ -160,7 +159,7 @@
 
         <!--
         <hbox id="timeContainerProps" pack="begin" align="center"
-              hidden="true" style="display: block;">
+              hidden="true" style="display: none;">
           <button label="sort"  oncommand="sortSegments; computeTimeNodes()"/>
           <spacer flex="1"/>
           <label value="timeContainer:"/>

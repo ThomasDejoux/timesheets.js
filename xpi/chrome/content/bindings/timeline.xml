@@ -1073,10 +1073,7 @@
 			  this.main = document.createElement("timeNode");
 			  this.main.setAttribute("class","timeNode");
 			  this.main.setAttribute("anonid",cpt);
-			  
 			  this.main.addEventListener('dblclick',eventdblclick,false);
-			  
-			  
 			  
               //if (!SCENARI)
               //  this.main.setAttribute("context", "transition");
@@ -1144,13 +1141,12 @@
               //this.begin.addEventListener("mousedown", function(event) {
               //  onClick(event);
               //  self.begin.addEventListener("mousemove", onResize, false);
-             // }, false);
+              //}, false);
             }
 
             // main 'timeSegment' object constructor
-            function timeSegment(begin, end, cpt) {
-              consoleLog("new (xbl): " + begin + " → " + end);
-
+            function timeSegment(begin, end) {
+              //consoleLog("new (xbl): " + begin + " → " + end);
               const self = this;
               this.begin = begin;
               this.end   = end;
@@ -1182,8 +1178,6 @@
               };
 
               // event handlers
-			  
-			  
               function updateCursor() {
                 timeCont.controls.select(self.time_in, self.time_out);
                 timeCont.controls.currentTime = self.time_in;

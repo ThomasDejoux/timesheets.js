@@ -82,7 +82,7 @@ function startup() {
   // thumbnails
   gDialog.sidebarLeft      = document.getElementById("sidebar-left");
 
-  consoleLog("startup");
+ // consoleLog("startup");
 
   // disable right-click on all HTML elements
   // XXX I can't believe there's no better way to do that
@@ -119,7 +119,7 @@ function loadMediaFiles(aForceReload) {
 }
 
 // time segments
-function newDataForm(begin, end, cpt) {
+/*function newDataForm(begin, end) {
  // var form = gDialog.xblFormTemplate.cloneNode(true);
  // form.removeAttribute("id");
  // form.removeAttribute("hidden");
@@ -132,7 +132,7 @@ function newDataForm(begin, end, cpt) {
   dataForm.setAttribute("id","df"+cpt);
   dataForm.max = gTimeContainer.duration;
   return dataForm;
-}
+}*/
 function newSegment() {
   
   var sel   = gTimeController.selection;
@@ -150,10 +150,15 @@ function newSegment() {
   // gTimeContainer will take the begin/end values from its 'controls' element
   // but passing these begin/end values manually would make sense.
   // Passing a 'segmentControls' element would make sense, too.
-  var form = newDataForm(begin, end, cptTimeSegment);
-  //gDialog.content.appendChild(form);
-  
-  gTimeContainer.add(begin, end, cptTimeSegment);
+  //var form = newDataForm(begin, end);
+  var form = document.createElement("dataform");
+  setTimeout(function() { // XXX
+    form.begin = begin;
+    form.end   = end;
+  }, 0);
+  gDialog.content.appendChild(form);
+
+  gTimeContainer.add(begin, end);
   //gTimeContainer.draw();
 }
 function delSegment(timeSegment) {
@@ -175,7 +180,7 @@ function sortSegments() {
       var curr = gTimeSegments[i];
       var next = gTimeSegments[i+1];
       if (curr.begin > next.begin) { // swap these two items
-        consoleLog("swap #" + i);
+        //consoleLog("swap #" + i);
         data1 = curr.controls.data.value;
         data2 = next.controls.data.value;
         gDialog.content.insertBefore(next.controls.main, curr.controls.main);
@@ -192,7 +197,7 @@ function sortSegments() {
 
 // redraw time blocks
 function redrawSegmentBlocks(event) {
-  consoleLog("<" + event.target.nodeName + "> redraw");
+ // consoleLog("<" + event.target.nodeName + "> redraw");
   //var begin = event.target.begin; // == gTimeController.begin
   //var end   = event.target.end;   // == gTimeController.end
   var begin = event.begin; // == waveform.begin
@@ -207,7 +212,7 @@ function computeTimeNodes() { // XXX
   sortSegments();
   if (!gDialog.timeContainer) return;
   var timeContainer = gDialog.timeContainer.value;
-  consoleLog(timeContainer);
+  //consoleLog(timeContainer);
   for (var i = 0; i < gTimeSegments.length - 1; i++) {
     var out;
     var end = gTimeSegments[i].end;
@@ -228,7 +233,7 @@ function computeTimeNodes() { // XXX
 // main 'timeSegment' object
 function timeSegment(begin, end, cpt) {
 
-  consoleLog("new: " + begin + " → " + end);
+  //consoleLog("new: " + begin + " → " + end);
   const self = this;
 
   this.begin = begin;
@@ -284,13 +289,13 @@ function timeSegment(begin, end, cpt) {
         updateCursor();
         break;
       case 1:
-        consoleLog("delete current time node");
+        //consoleLog("delete current time node");
         delSegment(self);
         break;
     }
   }, false);
   block.main.addEventListener("dblclick", function(event) {
-    consoleLog("select current time node");
+   // consoleLog("select current time node");
     updateCursor();
     //gTimeCursor.zoomIn();
     gTimeController.zoomIn();
@@ -414,7 +419,7 @@ function segmentControls(parent, begin, end) {
   this.end.onchange   = hmsFormat;
 
   this.focus = function () {
-    consoleLog(self.data.value);
+    //consoleLog(self.data.value);
     self.data.focus();
   };
   this.blur = function () {
@@ -436,6 +441,8 @@ function segmentThumb(parent, begin, end, cpt) {
   this.blur = function () {
     self.main.removeAttribute("class");
   };
+  var thumb = document.createElement("slide");
+    this.main.appendChild(thumb);
 }
 
 // convert seconds (float) to a time string (0:00 or 0:00:00)
@@ -471,7 +478,7 @@ function scrollTest(event) {
   //console.log(event);
   //console.log(event.detail);
   var scroll = document.getElementById("scrollTest");
-  consoleLog(scroll.scrollLeft);
+  //consoleLog(scroll.scrollLeft);
 }
 
 //document.getElementById("scrollTest").addEventListener("scroll", scrollTest, false);
