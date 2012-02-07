@@ -204,7 +204,7 @@
               end   = Math.min(begin + dur/2, waveform.duration);
               /*waveform.cursor.setBegin(begin);*/
               /*waveform.cursor.setEnd(begin + dur / 2);*/
-              consoleLog("zoom: " + Math.round(begin) + ", " + Math.round(end));
+              //consoleLog("zoom: " + Math.round(begin) + ", " + Math.round(end));
               waveform.select(begin, end);
             }
             function beforeZoom(begin, end) {
@@ -489,7 +489,7 @@
             if (begin == end)
               end = Infinity;
             this.timeNodes.push(new timeSegment(begin, end));
-            consoleLog(this.timeNodes.length + " time node(s)");
+            //consoleLog(this.timeNodes.length + " time node(s)");
           ]]>
         </body>
       </method>
@@ -522,7 +522,7 @@
                 var curr = this.timeNodes[i];
                 var next = this.timeNodes[i+1];
                 if (curr.begin > next.begin) { // swap these two items
-                  consoleLog("swap #" + i);
+                  //consoleLog("swap #" + i);
                   //data1 = curr.controls.data.value;
                   //data2 = next.controls.data.value;
                   //gDialog.content.insertBefore(next.controls.main, curr.controls.main);

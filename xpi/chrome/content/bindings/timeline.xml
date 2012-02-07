@@ -1157,7 +1157,7 @@
 
             // main 'timeSegment' object constructor
             function timeSegment(begin, end) {
-              consoleLog("new (xbl): " + begin + " → " + end);
+              //consoleLog("new (xbl): " + begin + " → " + end);
 
               const self = this;
               this.begin = begin;

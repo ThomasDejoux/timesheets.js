@@ -80,7 +80,7 @@ function startup() {
   // thumbnails
   gDialog.sidebarLeft      = document.getElementById("sidebar-left");
 
-  consoleLog("startup");
+ // consoleLog("startup");
 
   // disable right-click on all HTML elements
   // XXX I can't believe there's no better way to do that
@@ -176,7 +176,7 @@ function sortSegments() {
       var curr = gTimeSegments[i];
       var next = gTimeSegments[i+1];
       if (curr.begin > next.begin) { // swap these two items
-        consoleLog("swap #" + i);
+        //consoleLog("swap #" + i);
         data1 = curr.controls.data.value;
         data2 = next.controls.data.value;
         gDialog.content.insertBefore(next.controls.main, curr.controls.main);
@@ -193,7 +193,7 @@ function sortSegments() {
 
 // redraw time blocks
 function redrawSegmentBlocks(event) {
-  consoleLog("<" + event.target.nodeName + "> redraw");
+ // consoleLog("<" + event.target.nodeName + "> redraw");
   //var begin = event.target.begin; // == gTimeController.begin
   //var end   = event.target.end;   // == gTimeController.end
   var begin = event.begin; // == waveform.begin
@@ -229,7 +229,7 @@ function computeTimeNodes() { // XXX
 // main 'timeSegment' object
 function timeSegment(begin, end) {
 
-  consoleLog("new: " + begin + " → " + end);
+  //consoleLog("new: " + begin + " → " + end);
   const self = this;
 
   this.begin = begin;
@@ -285,13 +285,13 @@ function timeSegment(begin, end) {
         updateCursor();
         break;
       case 1:
-        consoleLog("delete current time node");
+        //consoleLog("delete current time node");
         delSegment(self);
         break;
     }
   }, false);
   block.main.addEventListener("dblclick", function(event) {
-    consoleLog("select current time node");
+   // consoleLog("select current time node");
     updateCursor();
     //gTimeCursor.zoomIn();
     gTimeController.zoomIn();
@@ -415,7 +415,7 @@ function segmentControls(parent, begin, end) {
   this.end.onchange   = hmsFormat;
 
   this.focus = function () {
-    consoleLog(self.data.value);
+    //consoleLog(self.data.value);
     self.data.focus();
   };
   this.blur = function () {
@@ -471,7 +471,7 @@ function scrollTest(event) {
   //console.log(event);
   //console.log(event.detail);
   var scroll = document.getElementById("scrollTest");
-  consoleLog(scroll.scrollLeft);
+  //consoleLog(scroll.scrollLeft);
 }
 
 //document.getElementById("scrollTest").addEventListener("scroll", scrollTest, false);
