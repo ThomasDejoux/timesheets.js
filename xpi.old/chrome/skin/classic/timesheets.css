@@ -127,23 +127,16 @@ splitter vbox, splitter hbox {
   cursor: e-resize;
 }
 
-/* XBL sandbox -- base bindings */
+/* XBL sandbox */
 
 waveform {
-  -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#waveform");
+  -moz-binding: url("chrome://timesheets/content/timeline.xml#waveform");
   /*outline: 1px solid brown;*/
   /*margin-bottom: 20px;*/
 }
 
-timeContainer, par, seq, excl {
-  -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#timeContainer");
-  outline: 1px solid gray;
-}
-
-/* XBL sandbox -- custom widgets */
-
 timeController {
-  -moz-binding: url("chrome://timesheets/content/bindings/widgets.xml#timeController");
+  -moz-binding: url("chrome://timesheets/content/timeline.xml#timeController");
   outline: 1px solid gray;
   margin-bottom: 20px;
 }
@@ -151,10 +144,14 @@ timeController #newSegment {
   list-style-image: url("chrome://timesheets/skin/24/gtk-new.png");
 }
 
-dataform {
-  -moz-binding: url("chrome://timesheets/content/bindings/widgets.xml#thumbnail");
+timeContainer {
+  -moz-binding: url("chrome://timesheets/content/timeline.xml#timeContainer");
+  /*outline: 1px solid red;*/
 }
 
+dataform {
+  -moz-binding: url("chrome://timesheets/content/timeline.xml#dataform1");
+}
 
 slider {
   /*-moz-binding: url("");*/

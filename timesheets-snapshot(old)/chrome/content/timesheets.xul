@@ -35,7 +35,6 @@
    -
    - ***** END LICENSE BLOCK ***** -->
 
-
 <?xml-stylesheet type="text/css" href="chrome://global/skin/" ?>
 <?xml-stylesheet type="text/css" href="chrome://timesheets/skin/" ?>
 <window title = "Timesheet Composer"
@@ -85,7 +84,7 @@
     <splitter
         id        = "sidebar-left-splitter"
         class     = "chromeclass-extrachrome"
-        state     = ""
+        state     = "collapsed"
         collapse  = "before">
       <vbox flex="1">
         <grippy />
@@ -158,9 +157,9 @@
         <excl id="timeContainer" flex="1" />
               <!--controls="#timeController" />-->
 
-        
+        <!--
         <hbox id="timeContainerProps" pack="begin" align="center"
-              hidden="true" style="display: block;">
+              hidden="true" style="display: none;">
           <button label="sort"  oncommand="sortSegments; computeTimeNodes()"/>
           <spacer flex="1"/>
           <label value="timeContainer:"/>
@@ -185,7 +184,7 @@
             </menupopup>
           </menulist>
         </hbox>
-        
+        -->
         <html:div id="timeSegments" style="display: none;" />
       </vbox>
 
@@ -200,19 +199,9 @@
 
       <vbox id="content" flex="1">
         <!--<html:h2> data forms </html:h2>-->
-       <!-- <dataform id="xblFormTemplate" flex="1" begin="1:49" end="3:41" data="(empty!)" hidden="true" />
+        <dataform id="xblFormTemplate"  hidden="true" />
 
-         <groupbox id="segmentTemplate" hidden="true">
-          <hbox align="center">
-            <spacer flex="1"/>
-            <label value="begin"/>
-            <textbox />
-            <label value="end"/>
-            <textbox />
-            <checkbox label="auto" checked="false" hidden="true"/>
-          </hbox>
-          <textbox multiline="true" value="(empty)"/>
-        </groupbox>-->
+     
       </vbox>
 
     </vbox> <!-- appcontent -->

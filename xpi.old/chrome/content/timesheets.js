@@ -37,7 +37,7 @@
 const htmlNS  = "http://www.w3.org/1999/xhtml";
 const xulNS   = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 const SCENARI = false;
-const DEBUG   = false;
+const DEBUG   = true;
 
 var gDialog = {};       // UI elements
 var gMediaPlayer;       // <audio|video> element
@@ -48,11 +48,12 @@ var gTimeController;
 var gTimeContainer;
 
 function startup() {
+  foo();
   gWaveform = document.getElementById("waveform");
 
   gTimeController = document.getElementById("timeController");
   gTimeController.addEventListener("update", redrawSegmentBlocks, false);
-  gTimeController.addEventListener("middleclick", newSegment, false);
+  gTimeController.addEventListener("middleclick", newSegmentXBL, false);
 
   gTimeContainer = document.getElementById("timeContainer");
   if (!SCENARI)
@@ -64,16 +65,19 @@ function startup() {
   gDialog.mediaWaveform    = document.getElementById("mediaWaveform");
 
   // params
+  //gDialog.chunkDuration    = document.getElementById("chunkDuration");
+  //gDialog.zoomDelay        = document.getElementById("zoomDelay");
   gDialog.downloadButton   = document.getElementById("downloadButton");
   gDialog.downloadProgress = document.getElementById("downloadProgress");
 
-  // output
+  // outputs
+  //gDialog.elapsedTime      = document.getElementById("elapsedTime");
+  //gDialog.canvasWidth      = document.getElementById("canvasWidth");
   gDialog.console          = document.getElementById("console");
 
   // content
   gDialog.content          = document.getElementById("content");
   gDialog.segmentTemplate  = document.getElementById("segmentTemplate");
-  gDialog.xblFormTemplate  = document.getElementById("xblFormTemplate");
   gDialog.timeSegments     = document.getElementById("timeSegments");
   gDialog.timeContainer    = document.getElementById("container");
 
@@ -109,47 +113,91 @@ function loadMediaFiles(aForceReload) {
   var baseURL = gDialog.mediaBaseURI.value;
   gTimeController.media.src    = baseURL + gDialog.mediaSource.value;
   gTimeController.waveform.src = baseURL + gDialog.mediaWaveform.value;
-  // gWaveform.src                = baseURL + gDialog.mediaWaveform.value;
+  //gWaveform.src                = baseURL + gDialog.mediaWaveform.value;
   if (aForceReload) {
     gTimeController.waveform.load();
-    // gWaveform.load();
+    //gWaveform.load();
   }
 }
 
-// time segments
-function newDataForm(begin, end) {
- // var form = gDialog.xblFormTemplate.cloneNode(true);
- // form.removeAttribute("id");
- // form.removeAttribute("hidden");
- 
-  var dataForm = document.createElement("dataform");
-  var vbox = document.getElementById("content");
-  vbox.appendChild(dataForm);
-  consoleLog(begin);
-  dataForm.begin = begin;
-  dataForm.end   = end;
-  //dataForm.max = gTimeContainer.duration;
-  return dataForm;
+// load media source and waveform, dirty way
+// (to be used with the [unmaintained] #timeController_old binding)
+function loadMediaFiles_old(aForceReload) {
+  // get media URLs
+  var baseURL = gDialog.mediaBaseURI.value;
+  var mediaSource   = baseURL + gDialog.mediaSource.value;
+  var mediaWaveform = baseURL + gDialog.mediaWaveform.value;
+
+  // get a temp file for the local waveform data
+  var waveformFile = Components.classes["@mozilla.org/file/directory_service;1"]
+                               .getService(Components.interfaces.nsIProperties)
+                               .get("TmpD", Components.interfaces.nsIFile);
+  waveformFile.append(gDialog.mediaWaveform.value);
+
+  // load the remote media source in the HTML5 media player
+  //gMediaPlayer.src = mediaSource;
+  gTimeController.media.src = mediaSource;
+
+  // draw as soon as the media's metadata is ready
+  function draw() {
+    //setTimeout(function() { // XXX why do we need a delay here?
+      //drawWaveform(waveformFile);
+      gTimeController.draw(waveformFile);
+    //}, 1500);
+  }
+
+  // if a temp file is already available, use it and exit
+  if (waveformFile.exists() && !aForceReload) {
+    consoleLog(waveformFile.path + " already cached.");
+    draw();
+    return;
+  }
+
+  // get a URI for the remote waveform data
+  var mediaWaveformURI = Components.classes["@mozilla.org/network/io-service;1"]
+                                   .getService(Components.interfaces.nsIIOService)
+                                   .newURI(mediaWaveform, null, null);
+
+  // download waveform data with nsIWebBrowserPersist
+  // https://developer.mozilla.org/en/Code_snippets/Downloading_Files
+  // XXX (nsIDownloadManager might be simpler for this)
+  const nsIWBP = Components.interfaces.nsIWebBrowserPersist;
+  var persist = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"]
+                          .createInstance(nsIWBP);
+  persist.persistFlags = nsIWBP.PERSIST_FLAGS_REPLACE_EXISTING_FILES
+                       | nsIWBP.PERSIST_FLAGS_FROM_CACHE;
+  persist.progressListener = {
+    onProgressChange: function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {
+      gDialog.downloadProgress.value = 100 * aCurTotalProgress / aMaxTotalProgress;
+    },
+    onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
+      if (aStateFlags & 0x10) { // finished, failed or canceled
+        gDialog.downloadProgress.style.visibility = "hidden";
+        consoleLog(waveformFile.path + " downloaded.");
+        draw();
+      }
+    }
+  }
+  gDialog.downloadProgress.style.visibility = "visible";
+  persist.saveURI(mediaWaveformURI, null, null, null, "", waveformFile);
 }
+
+/* time segments
 function newSegment() {
-  
-  var sel   = gTimeController.selection;
-  var begin = Math.round(sel.begin * 100) / 100;
-  var end   = Math.round(sel.end   * 100) / 100;
+  var begin = Math.round(gTimeCursor.begin * 100) / 100;
+  var end   = Math.round(gTimeCursor.end   * 100) / 100;
   if (begin == end)
     end = Infinity;
-
-  // quick and dirty way
+  gTimeSegments.push(new timeSegment(begin, end));
+} */
+function newSegmentXBL() {
+  var begin = Math.round(gTimeController.selection.begin * 100) / 100;
+  var end   = Math.round(gTimeController.selection.end   * 100) / 100;
+  if (begin == end)
+    end = Infinity;
   gTimeSegments.push(new timeSegment(begin, end));
 
-  // TODO: let's be serious...
-  // gTimeContainer will take the begin/end values from its 'controls' element
-  // but passing these begin/end values manually would make sense.
-  // Passing a 'segmentControls' element would make sense, too.
-  var form = newDataForm(begin, end);
-  gDialog.content.appendChild(form);
-
-  gTimeContainer.add(begin, end);
+  gTimeContainer.add();
   //gTimeContainer.draw();
 }
 function delSegment(timeSegment) {
@@ -223,7 +271,6 @@ function computeTimeNodes() { // XXX
 
 // main 'timeSegment' object
 function timeSegment(begin, end) {
-
   consoleLog("new: " + begin + " → " + end);
   const self = this;
 
@@ -232,15 +279,14 @@ function timeSegment(begin, end) {
 
   this.time_in  = begin;
   this.time_out = end;
-  
+
   // append a XUL groupbox in #content
-  //var controls = new segmentControls(this, begin, end);
-  //gDialog.content.appendChild(controls.main);
+  var controls = new segmentControls(this, begin, end);
+  gDialog.content.appendChild(controls.main);
 
   // append an HTML segment in #timeSegments
   var block = new segmentBlock(this, begin, end);
   gDialog.timeSegments.appendChild(block.main);
-  gDialog.timeSegments.setAttribute("width","15%");
 
   // append a thumbnail in #sidebar-left
   var thumb = new segmentThumb(this, begin, end);
@@ -251,9 +297,7 @@ function timeSegment(begin, end) {
     self.end   = aEnd;
     block.update();
     computeTimeNodes();
-   
     updateCursor();
-   
   };
 
   // event handlers
@@ -293,7 +337,7 @@ function timeSegment(begin, end) {
   }, false);
 
   // event handlers :: segmentControls
- /* controls.begin.oninput = function() {
+  controls.begin.oninput = function() {
     var value = hms2time(this.value);
     consoleLog("update: " + value);
     self.update(value, self.end);
@@ -316,9 +360,8 @@ function timeSegment(begin, end) {
   controls.data.select();
 
   // expose 'controls' and 'block'
-  this.controls = controls;*/
+  this.controls = controls;
   this.block    = block;
-   
 }
 
 // <hbox> block for the #timeSegments container
@@ -437,14 +480,14 @@ function segmentThumb(parent, begin, end) {
 function time2hms(time) {
   if (isNaN(time) || time >= Infinity || time == 0)
     return "";
-  var seconds = Math.round(time * 100) / 100;
+  seconds = Math.round(time * 100) / 100;
   var sec = seconds % 60;
   sec = Math.round(sec * 100) / 100;
   var str = sec;
   if (sec < 10)
     str = "0" + str;
   var minutes = Math.floor(seconds / 60);
-  var min = minutes % 60;
+  min = minutes % 60;
   str = min + ":" + str;
   if (!gMediaPlayer || (gMediaPlayer.duration < 3600)) return str;
   if (min < 10)

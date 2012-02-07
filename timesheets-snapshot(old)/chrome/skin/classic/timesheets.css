@@ -135,6 +135,10 @@ waveform {
   /*margin-bottom: 20px;*/
 }
 
+xblFormTemplate {
+    -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#xblFormTemplate");
+}
+
 timeContainer, par, seq, excl {
   -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#timeContainer");
   outline: 1px solid gray;
@@ -154,7 +158,6 @@ timeController #newSegment {
 dataform {
   -moz-binding: url("chrome://timesheets/content/bindings/widgets.xml#thumbnail");
 }
-
 
 slider {
   /*-moz-binding: url("");*/

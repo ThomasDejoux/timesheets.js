@@ -118,21 +118,15 @@ function loadMediaFiles(aForceReload) {
 
 // time segments
 function newDataForm(begin, end) {
- // var form = gDialog.xblFormTemplate.cloneNode(true);
- // form.removeAttribute("id");
- // form.removeAttribute("hidden");
- 
-  var dataForm = document.createElement("dataform");
-  var vbox = document.getElementById("content");
-  vbox.appendChild(dataForm);
-  consoleLog(begin);
-  dataForm.begin = begin;
-  dataForm.end   = end;
-  //dataForm.max = gTimeContainer.duration;
-  return dataForm;
+  var form = gDialog.xblFormTemplate.cloneNode(true);
+  form.removeAttribute("id");
+  form.removeAttribute("hidden");
+  form.begin = begin;
+  form.end   = end;
+  form.max = gTimeContainer.duration;
+  return form;
 }
 function newSegment() {
-  
   var sel   = gTimeController.selection;
   var begin = Math.round(sel.begin * 100) / 100;
   var end   = Math.round(sel.end   * 100) / 100;
@@ -145,6 +139,7 @@ function newSegment() {
   // TODO: let's be serious...
   // gTimeContainer will take the begin/end values from its 'controls' element
   // but passing these begin/end values manually would make sense.
+
   // Passing a 'segmentControls' element would make sense, too.
   var form = newDataForm(begin, end);
   gDialog.content.appendChild(form);
@@ -223,7 +218,6 @@ function computeTimeNodes() { // XXX
 
 // main 'timeSegment' object
 function timeSegment(begin, end) {
-
   consoleLog("new: " + begin + " → " + end);
   const self = this;
 
@@ -232,15 +226,14 @@ function timeSegment(begin, end) {
 
   this.time_in  = begin;
   this.time_out = end;
-  
+
   // append a XUL groupbox in #content
-  //var controls = new segmentControls(this, begin, end);
-  //gDialog.content.appendChild(controls.main);
+  var controls = new segmentControls(this, begin, end);
+  gDialog.content.appendChild(controls.main);
 
   // append an HTML segment in #timeSegments
   var block = new segmentBlock(this, begin, end);
   gDialog.timeSegments.appendChild(block.main);
-  gDialog.timeSegments.setAttribute("width","15%");
 
   // append a thumbnail in #sidebar-left
   var thumb = new segmentThumb(this, begin, end);
@@ -251,9 +244,7 @@ function timeSegment(begin, end) {
     self.end   = aEnd;
     block.update();
     computeTimeNodes();
-   
     updateCursor();
-   
   };
 
   // event handlers
@@ -293,7 +284,7 @@ function timeSegment(begin, end) {
   }, false);
 
   // event handlers :: segmentControls
- /* controls.begin.oninput = function() {
+  controls.begin.oninput = function() {
     var value = hms2time(this.value);
     consoleLog("update: " + value);
     self.update(value, self.end);
@@ -316,9 +307,8 @@ function timeSegment(begin, end) {
   controls.data.select();
 
   // expose 'controls' and 'block'
-  this.controls = controls;*/
+  this.controls = controls;
   this.block    = block;
-   
 }
 
 // <hbox> block for the #timeSegments container

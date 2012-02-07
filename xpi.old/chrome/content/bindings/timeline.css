@@ -35,10 +35,10 @@
   - ***** END LICENSE BLOCK *****/
 
 textbox[type="time"] {
-  -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#timebox");
+  -moz-binding: url("chrome://timesheets/content/timeline.xml#timebox");
 }
 waveform {
-  -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#waveform");
+  -moz-binding: url("chrome://timesheets/content/timeline.xml#waveform");
 }
 
 /*******************************************************************************
@@ -210,9 +210,5 @@ thumb[orient="horizontal"] {
 [anonid="segments"] div.handle-right {
   right: 0;
   cursor: e-resize;
-}
-
-.timeNode{
-  -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#timeNode");
 }
 
