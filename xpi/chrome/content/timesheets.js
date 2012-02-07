@@ -47,6 +47,8 @@ var gTimeSegments = []; // time segment array
 var gTimeController;
 var gTimeContainer;
 
+var cptTimeSegment = 0;
+
 function startup() {
   gWaveform = document.getElementById("waveform");
 
@@ -117,18 +119,18 @@ function loadMediaFiles(aForceReload) {
 }
 
 // time segments
-function newDataForm(begin, end) {
+function newDataForm(begin, end, cpt) {
  // var form = gDialog.xblFormTemplate.cloneNode(true);
  // form.removeAttribute("id");
  // form.removeAttribute("hidden");
- 
   var dataForm = document.createElement("dataform");
   var vbox = document.getElementById("content");
   vbox.appendChild(dataForm);
   consoleLog(begin);
   dataForm.begin = begin;
   dataForm.end   = end;
-  //dataForm.max = gTimeContainer.duration;
+  dataForm.setAttribute("id","df"+cpt);
+  dataForm.max = gTimeContainer.duration;
   return dataForm;
 }
 function newSegment() {
@@ -139,17 +141,19 @@ function newSegment() {
   if (begin == end)
     end = Infinity;
 
+  cptTimeSegment++;
+	
   // quick and dirty way
-  gTimeSegments.push(new timeSegment(begin, end));
+  gTimeSegments.push(new timeSegment(begin, end, cptTimeSegment));
 
   // TODO: let's be serious...
   // gTimeContainer will take the begin/end values from its 'controls' element
   // but passing these begin/end values manually would make sense.
   // Passing a 'segmentControls' element would make sense, too.
-  var form = newDataForm(begin, end);
-  gDialog.content.appendChild(form);
-
-  gTimeContainer.add(begin, end);
+  var form = newDataForm(begin, end, cptTimeSegment);
+  //gDialog.content.appendChild(form);
+  
+  gTimeContainer.add(begin, end, cptTimeSegment);
   //gTimeContainer.draw();
 }
 function delSegment(timeSegment) {
@@ -222,7 +226,7 @@ function computeTimeNodes() { // XXX
 }
 
 // main 'timeSegment' object
-function timeSegment(begin, end) {
+function timeSegment(begin, end, cpt) {
 
   consoleLog("new: " + begin + " → " + end);
   const self = this;
@@ -243,7 +247,7 @@ function timeSegment(begin, end) {
   gDialog.timeSegments.setAttribute("width","15%");
 
   // append a thumbnail in #sidebar-left
-  var thumb = new segmentThumb(this, begin, end);
+  var thumb = new segmentThumb(this, begin, end, cpt);
   gDialog.sidebarLeft.appendChild(thumb.main);
 
   this.update = function(aBegin, aEnd) {
@@ -419,11 +423,12 @@ function segmentControls(parent, begin, end) {
 }
 
 // thumbnails
-function segmentThumb(parent, begin, end) {
+function segmentThumb(parent, begin, end, cpt) {
   var self = this;
 
   // TODO fill with <canvas> and transition class
   this.main  = document.createElementNS(xulNS, "hbox"); // main block
+  this.main.setAttribute("id","thumb"+cpt);
 
   this.focus = function () {
     self.main.className = "active";

@@ -34,7 +34,7 @@
    - the terms of any one of the MPL, the GPL or the LGPL.
    -
    - ***** END LICENSE BLOCK ***** -->
-//test flo
+
 <?xml-stylesheet type="text/css" href="chrome://global/skin/" ?>
 <bindings id="timelineBindings"
     xmlns      = "http://www.mozilla.org/xbl"
@@ -927,7 +927,7 @@
           const end   = document.getAnonymousElementByAttribute(this, "anonid", "end");
 
           // timeController
-          this.controls = document.querySelector(this.getAttribute("controls"));
+          //this.controls = document.querySelector(this.getAttribute("controls"));
           /*this.dataform = document.querySelector(this.getAttribute("dataform"));*/
           this.timeNodes = [];
 		  
@@ -1010,35 +1010,6 @@
     <content>
       <xul:vbox xbl:inherits="flex,controls,dataform">
 
-        <!-- toolbar
-        <xul:toolbar anonid="toolbar" class="chromeclass-toolbar" pack="begin" align="center"
-                     xbl:inherits="hidden=hidetoolbar">
-          <xul:toolbarbutton anonid="sort" label="sort" oncommand="computeTimeNodes()"/>
-          <xul:spacer flex="1"/>
-          <xul:label value="timeContainer:"/>
-          <xul:menulist anonid="container" style="width: 100px;" onselect="computeTimeNodes()">
-            <xul:menupopup>
-              <xul:menuitem value="par"  label="par" selected="true"/>
-              <xul:menuitem value="seq"  label="seq" disabled="true"/>
-              <xul:menuitem value="excl" label="excl"/>
-            </xul:menupopup>
-          </xul:menulist>
-          <xul:label value="transition:"/>
-          <xul:menulist style="width: 200px;">
-            <xul:menupopup>
-              <xul:menuitem label="none"/>
-              <xul:menuseparator />
-              <xul:menuitem label="cross-fade"   />
-              <xul:menuitem label="fade-through" />
-              <xul:menuitem label="slide-x"      />
-              <xul:menuitem label="slide-y"      />
-              <xul:menuitem label="carousel-x"   />
-              <xul:menuitem label="carousel-y"   />
-            </xul:menupopup>
-          </xul:menulist>
-        </xul:toolbar>
-        -->
-
         <!-- time segments (filled dynamically) -->
         <html:div anonid="segments" />
 
@@ -1078,13 +1049,14 @@
       <method name="add">
         <parameter name="aBegin"/>
         <parameter name="aEnd"/>
+		<parameter name="acpt"/>
         <body>
           <![CDATA[
             const timeCont = this;
             const segments = document.getAnonymousElementByAttribute(this, "anonid", "segments");
 
             // <hbox> block for the #timeSegments container
-            function segmentBlock(parent, begin, end) {
+            function segmentBlock(parent, begin, end, cpt) {
               var self = this;
 
               // note: the 'main' element could be an <html:div> block
@@ -1100,8 +1072,9 @@
 			  
 			  this.main = document.createElement("timeNode");
 			  this.main.setAttribute("class","timeNode");
+			  this.main.setAttribute("anonid",cpt);
 			  
-			  this.main.addEventListener('click',eventclick,false);
+			  this.main.addEventListener('dblclick',eventdblclick,false);
 			  
 			  
 			  
@@ -1132,8 +1105,19 @@
               };
               this.update();
 
-			  function eventclick(e){
-			    alert("pwet");
+			  function eventdblclick(e){
+				var elm = e.target;
+				var id = elm.getAttribute("anonid",0);
+				var parent = elm.parentNode;
+				parent.removeChild(elm);
+				
+				var df = document.getElementById("df"+id);
+				var dfparent = df.parentNode;
+				dfparent.removeChild(df);
+				
+				var thumb = document.getElementById("thumb"+id);
+				var tparent = thumb.parentNode;
+				tparent.removeChild(thumb);
 			  }
 			  
               //this.focus = function () {
@@ -1164,7 +1148,7 @@
             }
 
             // main 'timeSegment' object constructor
-            function timeSegment(begin, end) {
+            function timeSegment(begin, end, cpt) {
               consoleLog("new (xbl): " + begin + " → " + end);
 
               const self = this;
@@ -1175,7 +1159,7 @@
               this.time_out = end;
 
               // append an HTML segment in #timeSegments
-              var block = new segmentBlock(this, begin, end);
+              var block = new segmentBlock(this, begin, end, cpt);
               //gDialog.timeSegments.appendChild(block.main);
               segments.appendChild(block.main);
 
@@ -1261,9 +1245,10 @@
 
             var begin = Math.min(aBegin, aEnd);
             var end   = Math.max(aBegin, aEnd);
+			var cptTimeSegment = acpt;
             if (begin == end)
               end = Infinity;
-            this.timeNodes.push(new timeSegment(begin, end));
+            this.timeNodes.push(new timeSegment(begin, end, cptTimeSegment));
             consoleLog(this.timeNodes.length + " time node(s)");
           ]]>
         </body>

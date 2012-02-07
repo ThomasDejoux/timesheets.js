@@ -158,7 +158,7 @@
         <excl id="timeContainer" flex="1" />
               <!--controls="#timeController" />-->
 
-        
+        <!--
         <hbox id="timeContainerProps" pack="begin" align="center"
               hidden="true" style="display: block;">
           <button label="sort"  oncommand="sortSegments; computeTimeNodes()"/>
@@ -185,7 +185,7 @@
             </menupopup>
           </menulist>
         </hbox>
-        
+        -->
         <html:div id="timeSegments" style="display: none;" />
       </vbox>
 
