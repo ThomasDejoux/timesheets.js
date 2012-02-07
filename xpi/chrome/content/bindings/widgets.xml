@@ -662,6 +662,71 @@
           onset="document.getAnonymousElementByAttribute(this, 'anonid', 'data').time = val;"/>
     </implementation>
   </binding>
+  
+    <binding id="thumbnailTemp">
+    <resources>
+      <stylesheet src="chrome://timesheets/skin/timeline.css" />
+    </resources>
+
+    <content>
+   
+            <xul:label value="begin"/>
+            <xul:label type="time" decimals="2" anonid="begin" xbl:inherits="value=begin" />
+            <xul:label value="end"/>
+            <xul:label type="time" decimals="2" anonid="end" xbl:inherits="value=end" />
+   
+ 
+    </content>
+
+    <implementation>
+      <constructor>
+        <![CDATA[
+          // UI elements
+          const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
+          const end   = document.getAnonymousElementByAttribute(this, "anonid", "end");
+          const data  = document.getAnonymousElementByAttribute(this, "anonid", "data");
+        ]]>
+      </constructor>
+
+      <property name="begin">
+        <getter>
+          <![CDATA[
+            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
+            return begin.time;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
+            begin.time = val;
+          ]]>
+        </setter>
+      </property>
+      <property name="end"
+          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'end').value;"
+          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'end').time = val;"/>
+      <property name="max">
+        <getter>
+          <![CDATA[
+            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
+            const end   = document.getAnonymousElementByAttribute(this, "anonid", "end");
+            return begin.max;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
+            const end   = document.getAnonymousElementByAttribute(this, "anonid", "end");
+            begin.max = val;
+            end.max = val;
+          ]]>
+        </setter>
+      </property>
+      <property name="data"
+          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'data').value;"
+          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'data').time = val;"/>
+    </implementation>
+  </binding>
 
 </bindings>
 

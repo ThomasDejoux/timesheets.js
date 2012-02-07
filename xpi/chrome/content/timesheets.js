@@ -436,6 +436,8 @@ function segmentThumb(parent, begin, end) {
   this.blur = function () {
     self.main.removeAttribute("class");
   };
+  var thumb = document.createElement("slide");
+    this.main.appendChild(thumb);
 }
 
 // convert seconds (float) to a time string (0:00 or 0:00:00)

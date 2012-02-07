@@ -168,3 +168,7 @@ thumb {
   -moz-appearance: scrollbarthumb-horizontal;
   background-color: blue !important;
 }
+
+slide{
+-moz-binding: url("chrome://timesheets/content/bindings/widgets.xml#thumbnailTemp");
+}
