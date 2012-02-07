@@ -34,7 +34,7 @@
    - the terms of any one of the MPL, the GPL or the LGPL.
    -
    - ***** END LICENSE BLOCK ***** -->
-//test flo
+
 <?xml-stylesheet type="text/css" href="chrome://global/skin/" ?>
 <bindings id="timelineBindings"
     xmlns      = "http://www.mozilla.org/xbl"
@@ -1101,10 +1101,6 @@
 			  this.main = document.createElement("timeNode");
 			  this.main.setAttribute("class","timeNode");
 			  
-			  this.main.addEventListener('click',eventclick,false);
-			  
-			  
-			  
               //if (!SCENARI)
               //  this.main.setAttribute("context", "transition");
 
@@ -1132,10 +1128,6 @@
               };
               this.update();
 
-			  function eventclick(e){
-			    alert("pwet");
-			  }
-			  
               //this.focus = function () {
               //  self.main.className = "active";
               //};
@@ -1160,7 +1152,7 @@
               //this.begin.addEventListener("mousedown", function(event) {
               //  onClick(event);
               //  self.begin.addEventListener("mousemove", onResize, false);
-             // }, false);
+              //}, false);
             }
 
             // main 'timeSegment' object constructor
@@ -1198,8 +1190,6 @@
               };
 
               // event handlers
-			  
-			  
               function updateCursor() {
                 timeCont.controls.select(self.time_in, self.time_out);
                 timeCont.controls.currentTime = self.time_in;
