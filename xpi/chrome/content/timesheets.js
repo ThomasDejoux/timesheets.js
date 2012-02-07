@@ -117,7 +117,7 @@ function loadMediaFiles(aForceReload) {
 }
 
 // time segments
-function newDataForm(begin, end) {
+/*function newDataForm(begin, end) {
  // var form = gDialog.xblFormTemplate.cloneNode(true);
  // form.removeAttribute("id");
  // form.removeAttribute("hidden");
@@ -130,7 +130,7 @@ function newDataForm(begin, end) {
   dataForm.end   = end;
   //dataForm.max = gTimeContainer.duration;
   return dataForm;
-}
+}*/
 function newSegment() {
   
   var sel   = gTimeController.selection;
@@ -146,7 +146,12 @@ function newSegment() {
   // gTimeContainer will take the begin/end values from its 'controls' element
   // but passing these begin/end values manually would make sense.
   // Passing a 'segmentControls' element would make sense, too.
-  var form = newDataForm(begin, end);
+  //var form = newDataForm(begin, end);
+  var form = document.createElement("dataform");
+  setTimeout(function() { // XXX
+    form.begin = begin;
+    form.end   = end;
+  }, 0);
   gDialog.content.appendChild(form);
 
   gTimeContainer.add(begin, end);
@@ -203,7 +208,7 @@ function computeTimeNodes() { // XXX
   sortSegments();
   if (!gDialog.timeContainer) return;
   var timeContainer = gDialog.timeContainer.value;
-  consoleLog(timeContainer);
+  //consoleLog(timeContainer);
   for (var i = 0; i < gTimeSegments.length - 1; i++) {
     var out;
     var end = gTimeSegments[i].end;

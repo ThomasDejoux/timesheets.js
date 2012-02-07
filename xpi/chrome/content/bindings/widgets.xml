@@ -597,7 +597,8 @@
         <xul:groupbox>
           <xul:hbox pack="end" align="center">
             <xul:label value="begin"/>
-            <xul:textbox type="time" decimals="2" anonid="begin" />
+            <!--<xul:textbox type="time" decimals="2" anonid="begin" />-->
+            <xul:textbox type="time" decimals="2" anonid="begin" xbl:inherits="value=begin" />
             <xul:label value="end"/>
             <xul:textbox type="time" decimals="2" anonid="end" xbl:inherits="value=end" />
           </xul:hbox>
@@ -616,7 +617,7 @@
         ]]>
       </constructor>
 
-      <property name="begin">
+      <!--<property name="begin">
         <getter>
           <![CDATA[
             const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
@@ -632,7 +633,10 @@
           consoleLog('begin.time = ' + begin.time);
           ]]>
         </setter>
-      </property>
+      </property>-->
+      <property name="begin"
+          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'begin').value;"
+          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'begin').time = val;"/>
       <property name="end"
           onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'end').value;"
           onset="document.getAnonymousElementByAttribute(this, 'anonid', 'end').time = val;"/>
