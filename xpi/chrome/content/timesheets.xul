@@ -35,7 +35,6 @@
    -
    - ***** END LICENSE BLOCK ***** -->
 
-
 <?xml-stylesheet type="text/css" href="chrome://global/skin/" ?>
 <?xml-stylesheet type="text/css" href="chrome://timesheets/skin/" ?>
 <window title = "Timesheet Composer"
