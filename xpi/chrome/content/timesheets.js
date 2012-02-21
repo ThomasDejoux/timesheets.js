@@ -119,7 +119,7 @@ function loadMediaFiles(aForceReload) {
 }
 
 // time segments
-/*function newDataForm(begin, end) {
+function newDataForm(begin, end, cpt) {
  // var form = gDialog.xblFormTemplate.cloneNode(true);
  // form.removeAttribute("id");
  // form.removeAttribute("hidden");
@@ -132,7 +132,7 @@ function loadMediaFiles(aForceReload) {
   dataForm.setAttribute("id","df"+cpt);
   dataForm.max = gTimeContainer.duration;
   return dataForm;
-}*/
+}
 function newSegment() {
   
   var sel   = gTimeController.selection;
@@ -150,15 +150,15 @@ function newSegment() {
   // gTimeContainer will take the begin/end values from its 'controls' element
   // but passing these begin/end values manually would make sense.
   // Passing a 'segmentControls' element would make sense, too.
-  //var form = newDataForm(begin, end);
-  var form = document.createElement("dataform");
-  setTimeout(function() { // XXX
-    form.begin = begin;
-    form.end   = end;
-  }, 0);
-  gDialog.content.appendChild(form);
+  var form = newDataForm(begin, end, cptTimeSegment);
+  //var form = document.createElement("dataform");
+  //setTimeout(function() { // XXX
+  //  form.begin = begin;
+  //  form.end   = end;
+  //}, 0);
+  //gDialog.content.appendChild(form);
 
-  gTimeContainer.add(begin, end);
+  gTimeContainer.add(begin, end, cptTimeSegment);
   //gTimeContainer.draw();
 }
 function delSegment(timeSegment) {
@@ -202,6 +202,7 @@ function redrawSegmentBlocks(event) {
   //var end   = event.target.end;   // == gTimeController.end
   var begin = event.begin; // == waveform.begin
   var end   = event.end;   // == waveform.end
+  //alert(begin+" - "+end);
   //consoleLog(begin + " → " + end);
   for (var i = 0; i < gTimeSegments.length; i++) {
     gTimeSegments[i].block.draw(begin, end);
@@ -252,8 +253,8 @@ function timeSegment(begin, end, cpt) {
   gDialog.timeSegments.setAttribute("width","15%");
 
   // append a thumbnail in #sidebar-left
-  var thumb = new segmentThumb(this, begin, end, cpt);
-  gDialog.sidebarLeft.appendChild(thumb.main);
+  var thumb = new segmentThumb(begin, end, cpt, gDialog.sidebarLeft);
+  //gDialog.sidebarLeft.appendChild(thumb);
 
   this.update = function(aBegin, aEnd) {
     self.begin = aBegin;
@@ -428,13 +429,11 @@ function segmentControls(parent, begin, end) {
 }
 
 // thumbnails
-function segmentThumb(parent, begin, end, cpt) {
-  var self = this;
-
+function segmentThumb(begin, end, cpt, sidebar) {
+  
   // TODO fill with <canvas> and transition class
-  this.main  = document.createElementNS(xulNS, "hbox"); // main block
-  this.main.setAttribute("id","thumb"+cpt);
-
+  /*this.main  = document.createElementNS(xulNS, "hbox"); // main block
+  
   this.focus = function () {
     self.main.className = "active";
   };
@@ -442,7 +441,25 @@ function segmentThumb(parent, begin, end, cpt) {
     self.main.removeAttribute("class");
   };
   var thumb = document.createElement("slide");
-    this.main.appendChild(thumb);
+  thumb.setAttribute("id","thumb"+cpt);
+    this.main.appendChild(thumb);*/
+	
+	
+  thumb = document.createElement("slide");
+  sidebar.appendChild(thumb);
+  thumb.setAttribute("id","thumb"+cpt);
+	
+  /*this.focus = function () {
+    self.main.className = "active";
+  };
+  this.blur = function () {
+    self.main.removeAttribute("class");
+  };*/
+  
+  thumb.begin = begin;
+  thumb.end = end;
+  
+  return thumb;
 }
 
 // convert seconds (float) to a time string (0:00 or 0:00:00)

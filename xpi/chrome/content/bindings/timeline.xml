@@ -226,8 +226,8 @@
         <html:div anonid="timeline">
           <html:canvas anonid="pcmGraph" width="512" height="60" />
           <html:canvas anonid="pcmZoom"  width="512" height="20" />
-          <html:div    anonid="timePos"  />
-          <html:div    anonid="timeSpan" />
+          <html:div    id="time1" anonid="timePos"  />
+          <html:div    id="time2" anonid="timeSpan" />
           <children />
         </html:div>
 
@@ -1057,6 +1057,8 @@
 
             // <hbox> block for the #timeSegments container
             function segmentBlock(parent, begin, end, cpt) {
+			
+			
               var self = this;
 
               // note: the 'main' element could be an <html:div> block
@@ -1074,6 +1076,7 @@
 			  this.main.setAttribute("class","timeNode");
 			  this.main.setAttribute("anonid",cpt);
 			  this.main.addEventListener('dblclick',eventdblclick,false);
+			  this.main.addEventListener('click',onClick,false);
 			  
               //if (!SCENARI)
               //  this.main.setAttribute("context", "transition");
@@ -1115,7 +1118,55 @@
 				var thumb = document.getElementById("thumb"+id);
 				var tparent = thumb.parentNode;
 				tparent.removeChild(thumb);
+				
+				var time1 = document.getElementById("time1");
+				var time2 = document.getElementById("time2");
+				
+				time1.style.left  = "0%";
+				time2.style.left  = "0%";
+                time2.style.width = "0%";
+				
+				var mediaTime = document.getElementById("mediaTime1");
+				mediaTime.time = 0;
+				var mediaTime2 = document.getElementById("mediaTime2");
+				mediaTime2.time = 0;
 			  }
+			  
+			  function onClick(event) {
+			  
+				//var waveform = document.getElementById("timeController");
+				//var style = waveform.style;
+				
+				var waveform = document.getElementById("wave");
+				
+				var mediaTime = document.getElementById("mediaTime1");
+				var mediaTime2 = document.getElementById("mediaTime2");
+				
+				var time1 = document.getElementById("time1");
+				var time2 = document.getElementById("time2");
+				
+				var left  = Math.max(parent.time_in,  waveform.begin);
+                var right = Math.min(parent.time_out, waveform.end);
+
+				mediaTime.time = parent.time_in;
+				mediaTime2.time = parent.time_out;
+				
+                if (left >= right) {
+                  style.display = "none";
+                } else {
+                  var duration = waveform.end - waveform.begin;
+                  var ratio = (right - left) / duration;
+                  var offset = (left - waveform.begin) / duration;
+                  //style.left  = (offset * gTimeCursor.width) + "px";
+                  //style.width = (ratio  * gTimeCursor.width) + "px";
+                  //consoleLog("draw (xbl): " + aWaveformBegin + " → " + aWaveformEnd);
+                  time1.style.left  = (offset * 100) + "%";
+				  time2.style.left  = (offset * 100) + "%";
+                  time2.style.width = (ratio  * 100) + "%";
+                  //style.display = "block";
+                }
+				
+              }
 			  
               //this.focus = function () {
               //  self.main.className = "active";
@@ -1125,8 +1176,7 @@
               //};
 
               // Event listeners: begin/end drag
-              //function onClick(event) {
-              //}
+              
               //function onResize(event) {
               //  return; // XXX
               //  if (event.button) return;
@@ -1145,8 +1195,10 @@
             }
 
             // main 'timeSegment' object constructor
-            function timeSegment(begin, end) {
+            function timeSegment(begin, end, cpt) {
               //consoleLog("new (xbl): " + begin + " → " + end);
+			  
+			  
               const self = this;
               this.begin = begin;
               this.end   = end;
@@ -1237,9 +1289,14 @@
               this.block    = block;
             }
 
+			
             var begin = Math.min(aBegin, aEnd);
             var end   = Math.max(aBegin, aEnd);
 			var cptTimeSegment = acpt;
+			
+			//alert(acpt);
+			//alert(cptTimeSegment);
+			
             if (begin == end)
               end = Infinity;
             this.timeNodes.push(new timeSegment(begin, end, cptTimeSegment));

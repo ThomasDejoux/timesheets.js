@@ -76,7 +76,10 @@
           <xul:toolbarbutton anonid="mediaPlay"  tooltiptext="Play"  oncommand="media.play();"/>
           <xul:toolbarbutton anonid="mediaPause" tooltiptext="Pause" oncommand="media.pause();"/>
           <xul:vbox>
-            <xul:textbox anonid="mediaTime" type="time" value="0" decimals="0" max="3599"/>
+		  <xul:hbox>
+            <xul:textbox id="mediaTime1" anonid="mediaTime" type="time" value="0" decimals="0" max="3599"/>
+			<xul:textbox id="mediaTime2" anonid="mediaTimeEnd" type="time" value="0" decimals="0" max="3599"/>
+		  </xul:hbox>
           </xul:vbox>
           <xul:spacer flex="1" />
           <xul:toolbarbutton anonid="zoomFit" tooltiptext="Fit"      oncommand="zoomOut(true);"/>
@@ -86,7 +89,7 @@
         </xul:toolbar>
 
         <!-- timeline -->
-        <xul:waveform anonid="waveform" flex="1" />
+        <xul:waveform id="wave" anonid="waveform" flex="1" />
 
       </xul:vbox>
     </content>
@@ -98,6 +101,7 @@
           const toolbar   = document.getAnonymousElementByAttribute(this, "anonid", "toolbar");
           const waveform  = document.getAnonymousElementByAttribute(this, "anonid", "waveform");
           const mediaTime = document.getAnonymousElementByAttribute(this, "anonid", "mediaTime");
+		  const mediaTimeEnd = document.getAnonymousElementByAttribute(this, "anonid", "mediaTimeEnd");
 
           // parse the 'media' attribute and get the related <audio|video> element
           try {
@@ -112,6 +116,8 @@
           media.addEventListener("loadedmetadata", function() {
             mediaTime.min = 0;
             mediaTime.max = media.duration;
+			mediaTimeEnd.min = 0;
+			mediaTimeEnd.max = media.duration;
             /*waveform.duration = media.duration;*/
             /*waveform.cursor.setRange(0, media.duration);*/
           }, false);
@@ -142,6 +148,7 @@
           }, false);
           waveform.addEventListener("change", function() {
             mediaTime.time    = waveform.currentTime;
+			mediaTimeEnd.time = waveform.cursor.end;
             media.currentTime = waveform.currentTime;
           }, false);
 
@@ -634,6 +641,9 @@
           ]]>
         </setter>
       </property>-->
+	  
+	  
+	  
       <property name="begin"
           onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'begin').value;"
           onset="document.getAnonymousElementByAttribute(this, 'anonid', 'begin').time = val;"/>
@@ -670,10 +680,25 @@
 
     <content>
    
+	  <xul:vbox>
+        <!--<xul:groupbox>-->
+          <xul:hbox pack="end" align="center">
+		  <xul:vbox>
             <xul:label value="begin"/>
-            <xul:label type="time" decimals="2" anonid="begin" xbl:inherits="value=begin" />
+			<xul:label anonid="begin1" value=""/>
+            <!--<xul:textbox anonid="begin1" xbl:inherits="value=begin" />-->
             <xul:label value="end"/>
-            <xul:label type="time" decimals="2" anonid="end" xbl:inherits="value=end" />
+			<xul:label anonid="end1" value=""/>
+            <!--<xul:textbox anonid="end1" xbl:inherits="value=end" />-->
+			</xul:vbox>
+          </xul:hbox>
+        <!--</xul:groupbox>-->
+      </xul:vbox>
+   
+            <!--<xul:label value="begin"/>
+            <xul:textbox type="time" decimals="2" anonid="begin" xbl:inherits="value=begin" />
+            <xul:label value="end"/>
+            <xul:textbox type="time" decimals="2" anonid="end" xbl:inherits="value=end" />-->
    
  
     </content>
@@ -682,49 +707,41 @@
       <constructor>
         <![CDATA[
           // UI elements
-          const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
-          const end   = document.getAnonymousElementByAttribute(this, "anonid", "end");
-          const data  = document.getAnonymousElementByAttribute(this, "anonid", "data");
+		  //alert("test");
+          const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin1");
+          const end   = document.getAnonymousElementByAttribute(this, "anonid", "end1");
+          //const data  = document.getAnonymousElementByAttribute(this, "anonid", "data");
         ]]>
       </constructor>
 
-      <property name="begin">
-        <getter>
-          <![CDATA[
-            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
-            return begin.time;
-          ]]>
-        </getter>
-        <setter>
-          <![CDATA[
-            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
-            begin.time = val;
-          ]]>
-        </setter>
-      </property>
+	  
+	  
+      <property name="begin"
+          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'begin1').value;"
+          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'begin1').value = val;"/>
       <property name="end"
-          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'end').value;"
-          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'end').time = val;"/>
-      <property name="max">
+          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'end1').value;"
+          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'end1').value = val;"/>
+      <!--<property name="max">
         <getter>
           <![CDATA[
-            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
-            const end   = document.getAnonymousElementByAttribute(this, "anonid", "end");
+            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin1");
+            const end   = document.getAnonymousElementByAttribute(this, "anonid", "end1");
             return begin.max;
           ]]>
         </getter>
         <setter>
           <![CDATA[
-            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
-            const end   = document.getAnonymousElementByAttribute(this, "anonid", "end");
+            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin1");
+            const end   = document.getAnonymousElementByAttribute(this, "anonid", "end1");
             begin.max = val;
             end.max = val;
           ]]>
         </setter>
-      </property>
-      <property name="data"
+      </property>-->
+      <!--<property name="data"
           onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'data').value;"
-          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'data').time = val;"/>
+          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'data').time = val;"/>-->
     </implementation>
   </binding>
 
