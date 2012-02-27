@@ -588,7 +588,6 @@
           ]]>
         </body>
       </method>
-
     </implementation>
   </binding>
 
@@ -602,13 +601,12 @@
     <content>
       <xul:vbox xbl:inherits="flex">
         <xul:groupbox>
-          <xul:hbox pack="end" align="center">
+          <!--<xul:hbox pack="end" align="center">
             <xul:label value="begin"/>
-            <!--<xul:textbox type="time" decimals="2" anonid="begin" />-->
             <xul:textbox type="time" decimals="2" anonid="begin" xbl:inherits="value=begin" />
             <xul:label value="end"/>
             <xul:textbox type="time" decimals="2" anonid="end" xbl:inherits="value=end" />
-          </xul:hbox>
+          </xul:hbox>-->
           <xul:textbox anonid="data" xbl:inherits="value=data" multiline="true" value="(empty)"/>
         </xul:groupbox>
       </xul:vbox>
@@ -624,26 +622,6 @@
         ]]>
       </constructor>
 
-      <!--<property name="begin">
-        <getter>
-          <![CDATA[
-            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
-            return begin.time;
-          ]]>
-        </getter>
-        <setter>
-          <![CDATA[
-            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin");
-          consoleLog(begin.nodeName);
-            begin.time = val;
-            begin.value = val;
-          consoleLog('begin.time = ' + begin.time);
-          ]]>
-        </setter>
-      </property>-->
-	  
-	  
-	  
       <property name="begin"
           onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'begin').value;"
           onset="document.getAnonymousElementByAttribute(this, 'anonid', 'begin').time = val;"/>
@@ -668,41 +646,32 @@
         </setter>
       </property>
       <property name="data"
-          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'data').value;"
-          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'data').time = val;"/>
+        onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'data').value;"
+        onset="document.getAnonymousElementByAttribute(this, 'anonid', 'data').time = val;"/>
     </implementation>
   </binding>
   
-    <binding id="thumbnailTemp">
+  <binding id="thumbnailTemp">
     <resources>
       <stylesheet src="chrome://timesheets/skin/timeline.css" />
     </resources>
 
     <content>
-   
 	  <xul:vbox>
-        <!--<xul:groupbox>-->
-          <xul:hbox pack="end" align="center">
-		  <xul:vbox>
+        <xul:hbox class="formslide" pack="end" align="center">
+		  <xul:vbox anonid="textslide">
+		  <xul:hbox>
             <xul:label value="begin"/>
-			<xul:label anonid="begin1" value=""/>
-            <!--<xul:textbox anonid="begin1" xbl:inherits="value=begin" />-->
+		    <xul:label anonid="begin1" value=""/>
+		  </xul:hbox>
+		  <xul:hbox>
             <xul:label value="end"/>
-			<xul:label anonid="end1" value=""/>
-            <!--<xul:textbox anonid="end1" xbl:inherits="value=end" />-->
-			</xul:vbox>
-          </xul:hbox>
-        <!--</xul:groupbox>-->
+		    <xul:label anonid="end1" value=""/>
+		  </xul:hbox>
+		  </xul:vbox>
+        </xul:hbox>
       </xul:vbox>
-   
-            <!--<xul:label value="begin"/>
-            <xul:textbox type="time" decimals="2" anonid="begin" xbl:inherits="value=begin" />
-            <xul:label value="end"/>
-            <xul:textbox type="time" decimals="2" anonid="end" xbl:inherits="value=end" />-->
-   
- 
     </content>
-
     <implementation>
       <constructor>
         <![CDATA[
@@ -710,38 +679,44 @@
 		  //alert("test");
           const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin1");
           const end   = document.getAnonymousElementByAttribute(this, "anonid", "end1");
+		  this.nb = 0;
           //const data  = document.getAnonymousElementByAttribute(this, "anonid", "data");
         ]]>
       </constructor>
 
-	  
-	  
+	  <field name="nb" />
+	  <field name="deb"/>
+	  <field name="fin"/>
       <property name="begin"
-          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'begin1').value;"
-          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'begin1').value = val;"/>
+        onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'begin1').value;">
+		<setter>
+		<![CDATA[
+		  var begin = val;
+		  var beginModif = time2hms(begin);
+		  document.getAnonymousElementByAttribute(this, 'anonid', 'begin1').value = beginModif;
+		  this.deb = begin;
+		]]>
+		</setter>
+	  </property>
       <property name="end"
-          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'end1').value;"
-          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'end1').value = val;"/>
-      <!--<property name="max">
-        <getter>
-          <![CDATA[
-            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin1");
-            const end   = document.getAnonymousElementByAttribute(this, "anonid", "end1");
-            return begin.max;
-          ]]>
-        </getter>
+        onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'end1').value;">
+		<setter>
+		<![CDATA[
+		  var end = val;
+		  var endModif = time2hms(end);
+		  document.getAnonymousElementByAttribute(this, 'anonid', 'end1').value = endModif;
+		  this.fin = end;
+		]]>
+		</setter>
+	  </property>
+	  <property name="max"
+        onget="return this.max;">
         <setter>
-          <![CDATA[
-            const begin = document.getAnonymousElementByAttribute(this, "anonid", "begin1");
-            const end   = document.getAnonymousElementByAttribute(this, "anonid", "end1");
-            begin.max = val;
-            end.max = val;
-          ]]>
-        </setter>
-      </property>-->
-      <!--<property name="data"
-          onget="return document.getAnonymousElementByAttribute(this, 'anonid', 'data').value;"
-          onset="document.getAnonymousElementByAttribute(this, 'anonid', 'data').time = val;"/>-->
+		<![CDATA[
+		  this.nb = val;
+		]]>
+		</setter>
+	  </property>
     </implementation>
   </binding>
 

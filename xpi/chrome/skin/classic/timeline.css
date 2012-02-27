@@ -216,3 +216,8 @@ thumb[orient="horizontal"] {
   -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#timeNode");
 }
 
+[anonid="textslide"]{
+  font-size: 15px;
+  font-weight: bold;
+  color:green;
+}
