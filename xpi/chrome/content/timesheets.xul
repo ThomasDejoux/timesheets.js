@@ -61,7 +61,7 @@
   <hbox id="sidebar-parent" flex="1">
 
     <!-- XXX add sidebarOverlay.xul -->
-    <vbox id="sidebar-left" class="chromeclass-extrachrome" hidden="false">
+    <vbox id="sidebar-left" class="chromeclass-extrachrome" style="overflow:auto" hidden="false">
     <!--
       <hbox>
         <label value="#1"/>
@@ -97,7 +97,11 @@
       <!-- editable content / preview -->
       <tabbox flex="1">
         <tabpanels flex="1">
-          <tabpanel id="editionTab"> </tabpanel>
+          <tabpanel id="editionTab">
+            <stack id="content" flex="1">
+       
+            </stack>
+          </tabpanel>
           <tabpanel id="previewTab"> </tabpanel>
         </tabpanels>
         <tabs>
@@ -106,14 +110,14 @@
         </tabs>
       </tabbox>
 
-      <splitter
+      <!--<splitter
           id       = "preview-splitter"
           style    = "margin-top: 1em;"
           class    = "chromeclass-extrachrome"
           state    = "collapsed"
           collapse = "before">
-        <!--<grippy />-->
-      </splitter>
+        <grippy />
+      </splitter>-->
 
       <!-- editable timeline, see timeline.xml for the relevant bindings -->
       <vbox id="timeline">
@@ -188,17 +192,17 @@
         <html:div id="timeSegments" style="display: none;" />
       </vbox>
 
-      <splitter
+      <!-- <splitter
           id       = "timeline-splitter"
           class    = "chromeclass-extrachrome"
           collapse = "after">
         <grippy />
-      </splitter>
+      </splitter>-->
 
       <!-- content / data -->
 
-      <vbox id="content" flex="1">
-        <!--<html:h2> data forms </html:h2>-->
+      <!-- <vbox id="content" flex="1">
+       <html:h2> data forms </html:h2>-->
        <!-- <dataform id="xblFormTemplate" flex="1" begin="1:49" end="3:41" data="(empty!)" hidden="true" />
 
          <groupbox id="segmentTemplate" hidden="true">
@@ -211,8 +215,8 @@
             <checkbox label="auto" checked="false" hidden="true"/>
           </hbox>
           <textbox multiline="true" value="(empty)"/>
-        </groupbox>-->
-      </vbox>
+        </groupbox>
+      </vbox>-->
 
     </vbox> <!-- appcontent -->
 

@@ -1111,9 +1111,9 @@
 				var parent = elm.parentNode;
 				parent.removeChild(elm);
 				
-				var df = document.getElementById("df"+id);
-				var dfparent = df.parentNode;
-				dfparent.removeChild(df);
+				//var df = document.getElementById("df"+id);
+				//var dfparent = df.parentNode;
+				//dfparent.removeChild(df);
 				
 				var thumb = document.getElementById("thumb"+id);
 				var tparent = thumb.parentNode;
@@ -1133,7 +1133,13 @@
 			  }
 			  
 			  function onClick(event) {
-			  
+        var elm = event.target;
+        var id = elm.getAttribute("anonid",0);
+        var df = document.getElementById("df"+id);
+        var cont = document.getElementById("content");
+        for(var i = 0; i < cont.childNodes.length; i++)
+        cont.childNodes[i].style.visibility="hidden";
+        df.style.visibility="visible";
 				//var waveform = document.getElementById("timeController");
 				//var style = waveform.style;
 				

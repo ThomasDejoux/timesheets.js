@@ -48,10 +48,10 @@ splitter vbox, splitter hbox {
   border: 1px solid gray;
 }
 
-#sidebar-left hbox {
+#sidebar-left hbox.formslide {
   min-width: 150px;
   width: 150px;
-  height: 120px;
+  height: 80px;
   border-radius: 10px;
   border: 1px solid black;
   padding: 10px;

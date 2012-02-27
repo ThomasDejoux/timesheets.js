@@ -127,10 +127,14 @@ function newDataForm(begin, end, cpt) {
   var vbox = document.getElementById("content");
   vbox.appendChild(dataForm);
   consoleLog(begin);
-  dataForm.begin = begin;
-  dataForm.end   = end;
+  //dataForm.begin = begin;
+  //dataForm.end   = end;
   dataForm.setAttribute("id","df"+cpt);
-  dataForm.max = gTimeContainer.duration;
+  var cont = document.getElementById("content");
+  for(var i = 0; i < cont.childNodes.length; i++)
+  cont.childNodes[i].style.visibility="hidden";
+  dataForm.setAttribute("style", "visibility=visible")
+  //dataForm.max = gTimeContainer.duration;
   return dataForm;
 }
 function newSegment() {
@@ -448,6 +452,22 @@ function segmentThumb(begin, end, cpt, sidebar) {
   thumb = document.createElement("slide");
   sidebar.appendChild(thumb);
   thumb.setAttribute("id","thumb"+cpt);
+  
+  var slideCurrent;
+  var slide = document.getElementById("sidebar-left");
+	
+  for(var i = (slide.childNodes.length)-1; i >= 0; i--)
+  {
+	slideCurrent = slide.childNodes[i];
+	if(slideCurrent.deb > begin)
+	{
+	  slide.insertBefore(thumb, slide.childNodes[i]);
+	}
+  }
+	
+  thumb.max = cpt;
+  thumb.begin = begin;
+  thumb.end = end;
 	
   /*this.focus = function () {
     self.main.className = "active";
@@ -456,8 +476,6 @@ function segmentThumb(begin, end, cpt, sidebar) {
     self.main.removeAttribute("class");
   };*/
   
-  thumb.begin = begin;
-  thumb.end = end;
   
   return thumb;
 }
