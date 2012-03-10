@@ -265,5 +265,5 @@
       <textbox id="console" multiline="true" flex="1" readonly="true" />
     </vbox>
 
-  </hbox><!-- sidebar-parent -->
+  </hbox><!-- sidebar-parents -->
 </window>
