@@ -174,10 +174,22 @@ thumb[orient="horizontal"] {
   background-color: white;
   border: 1px solid #ddd;
 }
-[anonid="segments"] > * {
+[anonid="segments"] > *.unselected {
   position: absolute;
   top: 0;
   background-color: #99f;
+  outline: 1pt dashed navy;
+  overflow: hidden;
+  width: 50px; /* default width, will be overridden */
+  height: 32px;
+  /*cursor: move;*/
+  cursor: pointer;
+  opacity: 0.6;
+}
+[anonid="segments"] > *.selected {
+  position: absolute;
+  top: 0;
+  background-color: red;
   outline: 1pt dashed navy;
   overflow: hidden;
   width: 50px; /* default width, will be overridden */
@@ -215,4 +227,5 @@ thumb[orient="horizontal"] {
 .timeNode{
   -moz-binding: url("chrome://timesheets/content/bindings/timeline.xml#timeNode");
 }
+
 

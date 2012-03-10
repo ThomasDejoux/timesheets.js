@@ -189,7 +189,7 @@
           </menulist>
         </hbox>
         -->
-        <html:div id="timeSegments" style="display: none;" />
+        <!--<html:div id="timeSegments" style="display: none;" />-->
       </vbox>
 
       <!-- <splitter
@@ -235,9 +235,9 @@
       <hbox>
         <textbox id="mediaBaseURI" flex="1" crop="end"
                  style="text-align: left;"
-                 value="http://localhost/timesheets/media/composer/" />
+                 value="http://wam.inrialpes.fr/timesheets/media/composer/" />
                  <!-- other possible default values:
-                 value="file:///home/kaze/www/timesheets/media/composer/" />
+                 value="file:///home/kaze/wwwam.inrialpes.frw/timesheets/media/composer/" />
                  value="http://wam.inrialpes.fr/timesheets/media/composer/" />
                  -->
       </hbox>

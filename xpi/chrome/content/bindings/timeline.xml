@@ -195,7 +195,7 @@
      -    currentTime          cursor position
      -    duration             waveform duration               (read-only)
      -    end                  visible area: end time          (read-only)
-     -    selection            current time span               (read-only)
+     -    selection            current time span               
      -    src                  waveform source URL
      -
      -  Methods:
@@ -912,8 +912,8 @@
     </resources>
 
     <content>
-      <xul:hbox xbl:inherits="context">
-        <html:div anonid="handle-left" />
+       <xul:hbox xbl:inherits="context" style="background-color: yellow;">
+       <html:div anonid="handle-left" />
         <html:div anonid="handle-right" />
       </xul:hbox>
     </content>
@@ -983,6 +983,29 @@
 		  
         ]]>
       </constructor>
+	  
+	  <field name="deb"/>
+	  <field name="fin"/>
+	  <property name="begin"
+        onget="return this.deb;">
+		<setter>
+		<![CDATA[
+		  var begin = val;
+		  alert(val);
+		  this.deb = begin;
+		  alert(this.deb);
+		]]>
+		</setter>
+	  </property>
+      <property name="end"
+        onget="return this.fin;">
+		<setter>
+		<![CDATA[
+		  var end = val;
+		  this.fin = end;
+		]]>
+		</setter>
+	  </property>
       <method name="draw">
         <parameter name="aBegin"/>
         <parameter name="aEnd"/>
@@ -990,11 +1013,12 @@
           <![CDATA[
             /*var begin = this.controls.begin;*/
             /*var end   = this.controls.end;*/
-            var begin = Math.min(aBegin, aEnd);
+            /*var begin = Math.min(aBegin, aEnd);
             var end   = Math.max(aBegin, aEnd);
             for (var i = 0; i < this.timeNodes.length; i++) {
               this.timeNodes[i].block.draw(begin, end);
-            }
+            }*/
+			alert("etst");
           ]]>
         </body>
       </method>
@@ -1011,7 +1035,7 @@
       <xul:vbox xbl:inherits="flex,controls,dataform">
 
         <!-- time segments (filled dynamically) -->
-        <html:div anonid="segments" />
+        <html:div anonid="segments" id="segment"/> 
 
       </xul:vbox>
     </content>
@@ -1024,6 +1048,7 @@
       </constructor>
 
       <field name="timeNodes" />
+	  
       <property name="type">
         <getter>
           <![CDATA[
@@ -1055,28 +1080,87 @@
             const timeCont = this;
             const segments = document.getAnonymousElementByAttribute(this, "anonid", "segments");
 
+			function newDataForm(begin, end, cpt) {
+			
+			  var dataForm = document.createElement("dataform");
+			  var vbox = document.getElementById("content");
+			  vbox.appendChild(dataForm);
+			  consoleLog(begin);
+			  dataForm.setAttribute("id","df:"+cpt);
+			  var cont = document.getElementById("content");
+			  for(var i = 0; i < cont.childNodes.length; i++)
+			  cont.childNodes[i].style.visibility="hidden";
+			  dataForm.setAttribute("style", "visibility=visible");
+			  return dataForm;
+			  
+			}
+			
+			// thumbnails
+			function segmentThumb(begin, end, cpt, sidebar) {
+				
+			  thumb = document.createElement("slide");
+			  sidebar.appendChild(thumb);
+			  thumb.setAttribute("id","thumb:"+cpt);
+			  thumb.setAttribute("class","selected");
+			  
+			  var slideCurrent;
+			  var slide = document.getElementById("sidebar-left");
+				
+			  for(var i = (slide.childNodes.length)-1; i >= 0; i--)
+			  {
+				slideCurrent = slide.childNodes[i];
+				if(slideCurrent.deb > begin)
+				{
+				  slide.insertBefore(thumb, slide.childNodes[i]);
+				}
+			  }
+			  
+			  
+				
+			  thumb.max = cpt;
+			  thumb.begin = begin;
+			  thumb.end = end;
+				
+			  thumb.addEventListener('click',onClick,false);
+			  
+				
+			  return thumb;
+			}
+			
             // <hbox> block for the #timeSegments container
             function segmentBlock(parent, begin, end, cpt) {
 			
-			
               var self = this;
-
-              // note: the 'main' element could be an <html:div> block
-              // but the contextual menu wouldn't work (see 'context' attribute)
-              //this.main  = document.createElementNS(xulNS, "hbox"); // main block
-              //this.begin = document.createElementNS(htmlNS, "div"); // left handle
-              //this.end   = document.createElementNS(htmlNS, "div"); // right handle
-
-              //this.begin.className = "handle-left";
-              //this.end.className   = "handle-right";
-              //this.main.appendChild(this.begin);
-              //this.main.appendChild(this.end);
 			  
+			  for(var i = 0; i < segments.childNodes.length; i++)
+			  {
+			    //alert("test");
+			    segments.childNodes[i].className = "unselected";
+			  }
+
 			  this.main = document.createElement("timeNode");
-			  this.main.setAttribute("class","timeNode");
+			  this.main.setAttribute("class","selected");
+			  this.main.setAttribute("id","timeNode:"+cpt); // XXX : enlever les références à l'anonid
 			  this.main.setAttribute("anonid",cpt);
 			  this.main.addEventListener('dblclick',eventdblclick,false);
 			  this.main.addEventListener('click',onClick,false);
+			  
+			  var form = newDataForm(begin, end, cptTimeSegment);
+			  
+			  var sidebar = document.getElementById("sidebar-left");
+			  for(var j = 0; j < sidebar.childNodes.length; j++)
+			  {
+				
+				if(sidebar.childNodes[j].className = "selected")
+				  sidebar.childNodes[j].className = "unselected";
+			  }
+			  
+			  var thumb = new segmentThumb(begin, end, cptTimeSegment, sidebar);
+			  
+			  
+			  
+			  //this.main.begin = begin;
+			  //this.main.end = end;
 			  
               //if (!SCENARI)
               //  this.main.setAttribute("context", "transition");
@@ -1092,9 +1176,6 @@
                   var duration = aWaveformEnd - aWaveformBegin;
                   var ratio = (right - left) / duration;
                   var offset = (left - aWaveformBegin) / duration;
-                  //style.left  = (offset * gTimeCursor.width) + "px";
-                  //style.width = (ratio  * gTimeCursor.width) + "px";
-                  //consoleLog("draw (xbl): " + aWaveformBegin + " → " + aWaveformEnd);
                   style.left  = (offset * 100) + "%";
                   style.width = (ratio  * 100) + "%";
                   style.display = "block";
@@ -1111,11 +1192,11 @@
 				var parent = elm.parentNode;
 				parent.removeChild(elm);
 				
-				//var df = document.getElementById("df"+id);
-				//var dfparent = df.parentNode;
-				//dfparent.removeChild(df);
+				var df = document.getElementById("df:"+id);
+				var dfparent = df.parentNode;
+				dfparent.removeChild(df);
 				
-				var thumb = document.getElementById("thumb"+id);
+				var thumb = document.getElementById("thumb:"+id);
 				var tparent = thumb.parentNode;
 				tparent.removeChild(thumb);
 				
@@ -1132,47 +1213,7 @@
 				mediaTime2.time = 0;
 			  }
 			  
-			  function onClick(event) {
-        var elm = event.target;
-        var id = elm.getAttribute("anonid",0);
-        var df = document.getElementById("df"+id);
-        var cont = document.getElementById("content");
-        for(var i = 0; i < cont.childNodes.length; i++)
-        cont.childNodes[i].style.visibility="hidden";
-        df.style.visibility="visible";
-				//var waveform = document.getElementById("timeController");
-				//var style = waveform.style;
-				
-				var waveform = document.getElementById("wave");
-				
-				var mediaTime = document.getElementById("mediaTime1");
-				var mediaTime2 = document.getElementById("mediaTime2");
-				
-				var time1 = document.getElementById("time1");
-				var time2 = document.getElementById("time2");
-				
-				var left  = Math.max(parent.time_in,  waveform.begin);
-                var right = Math.min(parent.time_out, waveform.end);
-
-				mediaTime.time = parent.time_in;
-				mediaTime2.time = parent.time_out;
-				
-                if (left >= right) {
-                  style.display = "none";
-                } else {
-                  var duration = waveform.end - waveform.begin;
-                  var ratio = (right - left) / duration;
-                  var offset = (left - waveform.begin) / duration;
-                  //style.left  = (offset * gTimeCursor.width) + "px";
-                  //style.width = (ratio  * gTimeCursor.width) + "px";
-                  //consoleLog("draw (xbl): " + aWaveformBegin + " → " + aWaveformEnd);
-                  time1.style.left  = (offset * 100) + "%";
-				  time2.style.left  = (offset * 100) + "%";
-                  time2.style.width = (ratio  * 100) + "%";
-                  //style.display = "block";
-                }
-				
-              }
+			  
 			  
               //this.focus = function () {
               //  self.main.className = "active";
@@ -1202,9 +1243,7 @@
 
             // main 'timeSegment' object constructor
             function timeSegment(begin, end, cpt) {
-              //consoleLog("new (xbl): " + begin + " → " + end);
-			  
-			  
+			
               const self = this;
               this.begin = begin;
               this.end   = end;
@@ -1214,19 +1253,9 @@
 
               // append an HTML segment in #timeSegments
               var block = new segmentBlock(this, begin, end, cpt);
-              //gDialog.timeSegments.appendChild(block.main);
+			  
               segments.appendChild(block.main);
-
-              /* append a XUL groupbox in #content
-              var controls = new segmentControls(this, begin, end);
-              gDialog.content.appendChild(controls.main);
-              */
-
-              /* append a thumbnail in #sidebar-left
-              var thumb = new segmentThumb(this, begin, end);
-              gDialog.sidebarLeft.appendChild(thumb.main);
-              */
-
+			  
               this.update = function(aBegin, aEnd) {
                 self.begin = aBegin;
                 self.end   = aEnd;
@@ -1241,18 +1270,9 @@
                 timeCont.controls.currentTime = self.time_in;
               }
 
-              // event handlers :: segmentBlock
-              block.begin.onclick = function() {
-                // TODO
-              };
-              block.end.onclick = function() {
-                // TODO
-              };
               block.main.addEventListener("mouseup", function(event) {
                 switch (event.button) {
                   case 0:
-                    //controls.focus();
-                    //thumb.focus();
                     updateCursor();
                     break;
                   case 1:
@@ -1261,50 +1281,23 @@
                     break;
                 }
               }, false);
+			  
               block.main.addEventListener("dblclick", function(event) {
                 consoleLog("select current time node");
                 updateCursor();
                 timeCont.controls.zoomIn();
               }, false);
 
-              /* event handlers :: segmentControls
-              controls.begin.oninput = function() {
-                var value = hms2time(this.value);
-                consoleLog("update: " + value);
-                self.update(value, self.end);
-              };
-              controls.end.oninput = function() {
-                var value = hms2time(this.value);
-                consoleLog("update: " + value);
-                self.update(self.begin, value);
-              };
-              controls.data.onfocus = function() {
-                block.focus();
-                updateCursor();
-              };
-              controls.data.onblur = function() {
-                block.blur();
-              }; */
-
-              // focus the new time node
-              // controls.data.focus();
-              // controls.data.select();
-
-              // expose 'controls' and 'block'
-              // this.controls = controls;
               this.block    = block;
             }
 
-			
             var begin = Math.min(aBegin, aEnd);
             var end   = Math.max(aBegin, aEnd);
 			var cptTimeSegment = acpt;
 			
-			//alert(acpt);
-			//alert(cptTimeSegment);
-			
             if (begin == end)
               end = Infinity;
+			  
             this.timeNodes.push(new timeSegment(begin, end, cptTimeSegment));
             consoleLog(this.timeNodes.length + " time node(s)");
           ]]>
@@ -1316,9 +1309,7 @@
           <![CDATA[
             var i = this.timeNodes.indexOf(timeSegment);
             if (i >= 0) {
-              //var ctrl = this.timeNodes[i].controls;
               var blck = this.timeNodes[i].block;
-              //ctrl.main.parentNode.removeChild(ctrl.main);
               blck.main.parentNode.removeChild(blck.main);
               this.timeNodes.splice(i, 1);
             }
@@ -1390,11 +1381,12 @@
           <![CDATA[
             /*var begin = this.controls.begin;*/
             /*var end   = this.controls.end;*/
-            var begin = Math.min(aBegin, aEnd);
+            /*var begin = Math.min(aBegin, aEnd);
             var end   = Math.max(aBegin, aEnd);
             for (var i = 0; i < this.timeNodes.length; i++) {
               this.timeNodes[i].block.draw(begin, end);
-            }
+            }*/
+			//alert("test");
           ]]>
         </body>
       </method>
