@@ -4,7 +4,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>timesheets@kompozer.net</em:id>
-    <em:version>0.5.0</em:version>
+    <em:version>0.6.0</em:version>
 
     <em:targetApplication>
       <!-- Firefox -->
